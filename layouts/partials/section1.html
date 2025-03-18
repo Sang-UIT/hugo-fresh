@@ -2,7 +2,113 @@
 {{- $title    := index $section1 "title" }}
 {{- $subtitle := index $section1 "subtitle" }}
 {{- $tiles    := index $section1 "tiles" }}
+
 <section class="section section-feature-grey is-medium" id="section1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+    #section1 .title.is-2 {
+        font-family: 'Dancing Script', cursive;
+        font-size: 4rem;
+        font-weight: bold;
+    }
+
+    /* Font cho các phần text còn lại */
+    #section1 .subtitle,
+    #section1 .tile-title,
+    #section1 .tile-text {
+        font-family: sans-serif; /* Hoặc font cụ thể bạn muốn */
+    }
+
+    #section1 .subtitle{
+        margin-bottom: 3rem;
+     }
+
+    /* Style cho các tile */
+    #section1 .tile {
+        position: relative; /* Quan trọng cho overlay */
+        overflow: hidden;   /* Ẩn phần nội dung tràn ra ngoài */
+        text-align: center;
+        margin-bottom: 2rem;
+        border-radius: 15px; /* Bo tròn góc (nếu muốn) */
+        transition: transform 0.3s ease; /* Mượt mà cho hiệu ứng zoom */
+    }
+    /* Tạo hiệu ứng phóng to khi hover vào tile */
+    #section1 .tile:hover{
+        transform: scale(1.05);
+    }
+    /* Tạo lớp phủ */
+    #section1 .tile::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0); /* Mặc định trong suốt */
+        transition: background-color 0.3s ease; /* Mượt mà cho hiệu ứng sẫm màu */
+        z-index: 1; /* Nằm trên hình ảnh */
+    }
+    /* Thay đổi lớp phủ sang màu tối hơn khi hover vào tile */
+    #section1 .tile:hover::before {
+        background-color: rgba(0, 0, 0, 0.4); /* Sẫm màu hơn */
+    }
+
+
+    #section1 .tile img {
+        max-width: 100%;
+        height: auto;
+        display: block; /* Loại bỏ khoảng trắng thừa dưới ảnh */
+/*         margin-bottom: 1rem; Không cần margin-bottom ở đây nữa */
+        border-radius: 15px; /* Bo tròn góc (nếu muốn) */
+        vertical-align: middle; /* Để loại bỏ khoảng trắng nếu có */
+        z-index: 0;
+    }
+
+    #section1 .tile-title,
+    #section1 .tile-text {
+        position: absolute; /* Đặt vị trí tuyệt đối */
+        left: 0;
+        width: 100%;
+        padding: 1rem; /* Khoảng cách với viền */
+        color: white;     /* Màu chữ */
+        opacity: 0;       /* Ẩn đi mặc định */
+        transition: opacity 0.3s ease, transform 0.3s ease; /* Hiệu ứng mượt mà */
+        z-index: 2;       /* Nằm trên lớp phủ */
+        text-align: center; /* căn giữa chữ (nếu muốn)*/
+        transform: translateY(20px); /* Di chuyển xuống dưới một chút */
+    }
+
+    #section1 .tile-title {
+      font-family: 'Dancing Script', cursive;
+        font-size: 2rem;
+        font-weight: bold;
+        top: 40%;            /* Đẩy title lên trên */
+        transform: translateY(-60%);
+
+    }
+
+    #section1 .tile-text {
+        top: 60%;            /* Đẩy text xuống dưới */
+        font-size: 1rem;
+    }
+
+    /* Hiển thị title và text khi hover */
+    #section1 .tile:hover .tile-title,
+    #section1 .tile:hover .tile-text {
+        opacity: 1;
+        transform: translateY(0); /* Di chuyển về vị trí ban đầu */
+    }
+
+
+    /* Button "Xem thêm" ở cuối */
+    #section1 .view-more-button {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+  </style>
+
   <div class="container">
     <div class="title-wrapper has-text-centered">
       <h2 class="title is-2">{{ $title }}</h2>
@@ -11,22 +117,13 @@
     </div>
 
     <div class="content-wrapper">
-      <div class="columns">
-        {{- range $tiles }}
-        <div class="column is-one-third">
-          <div class="feature-card is-bordered has-text-centered revealOnScroll delay-1" data-animation="fadeInLeft">
-            <div class="card-title">
-              <h4>{{ .title }}</h4>
-            </div>
-            <div class="card-icon">
-                <img src="{{ printf "images/illustrations/icons/%s.svg" .icon | relURL }}">
-            </div>
-            <div class="card-text">
-                <p>{{ .text }}</p>
-            </div>
-            <div class="card-action">
-              <a href="{{ .url }}" class="button btn-align-md accent-btn raised">{{ .buttonText }}</a>
-            </div>
+      <div class="columns is-multiline is-mobile">  <!-- Thêm class is-multiline và is-mobile -->
+        {{- range first 6 $tiles }}  <!-- Giới hạn 6 tile -->
+        <div class="column is-one-third-desktop is-half-tablet is-full-mobile"> <!-- Chia cột responsive -->
+          <div class="tile">
+            <img src="{{ printf "images/%s" .image | relURL }}" alt="{{ .title }}">
+            <h4 class="tile-title">{{ .title }}</h4>
+            <p class="tile-text">{{ .text }}</p>
           </div>
         </div>
         {{- end }}

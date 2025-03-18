@@ -1,32 +1,49 @@
-{{- $sidebar  := .Site.Params.sidebar }}
-{{- $logo     := index $sidebar "logo" }}
-{{- $sections := index $sidebar "sections" }}
-<div class="sidebar">
-  <div class="sidebar-header">
-    <img src="{{ printf "images/logos/%s.svg" $logo | relURL }}">
-    <a class="sidebar-close" href="javascript:void(0);">
-      <i data-feather="x"></i>
-    </a>
-  </div>
-  <div class="inner">
-    <ul class="sidebar-menu">
-      {{- range $sections }}
-      <li class="have-children">
-        <a href="#">
-          <span class="fa fa-{{ .icon }}"></span>
-          {{ .title }}
-        </a>
-        <ul>
-          {{- range .links }}
-          <li>
-            <a href="{{ .url }}">
-              {{ .text }}
-            </a>
-          </li>
-          {{- end }}
-        </ul>
-      </li>
-      {{- end }}
-    </ul>
-  </div>
+<div class="contact-sidebar">
+  <a href="#" class="contact-item contact-messenger">
+    <img src="/images/logos/message.svg" alt="Messenger">
+  </a>
+  <a href="#" class="contact-item contact-zalo">
+    <img src="/images/logos/zalo.svg" alt="Zalo">
+  </a>
+  <a href="tel:+1234567890" class="contact-item contact-phone">
+    <img src="/images/logos/phone.svg" alt="Phone">
+  </a>
 </div>
+
+<style>
+.contact-sidebar {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 60px;
+    background-color: #F2990D; /* Màu cam */
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.contact-item {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.contact-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Style riêng (tùy chọn) */
+.contact-messenger {}
+.contact-zalo {}
+.contact-phone {}
+</style>
