@@ -1,35 +1,187 @@
 {{- $section2 := .Site.Params.section2 }}
 {{- $title    := index $section2 "title" }}
 {{- $subtitle := index $section2 "subtitle" }}
-{{- $features := index $section2 "features" }}
-<section class="section is-medium" id="section2">
-  <div class="container">
-    <div class="columns">
-      <div class="column is-centered-tablet-portrait">
-        <h1 class="title section-title">{{ $title }}</h1>
-        <h3 class="subtitle is-5 is-muted">{{ $subtitle }}</h3>
-        <div class="divider"></div>
-      </div>
-      <div class="column is-7 mt-60">
-        {{- range $features }}
-        <article class="media icon-box">
-          <figure class="media-left">
-            <p class="image">
-              <img src="{{ printf "images/illustrations/icons/%s.svg" .icon | relURL }}">
-            </p>
-          </figure>
-          <div class="media-content mt-50">
-            <div class="content">
-              <p>
-                <span class="icon-box-title">{{ .title }}</span>
+{{- $items    := index $section2 "items" }}
+{{- $button_text := index $section2 "button_text" }}
+{{- $button_link := index $section2 "button_link" }}
 
-                <span class="icon-box-text">{{ .text | markdownify }}</span>
-              </p>
-            </div>
-          </div>
-        </article>
+<section class="section section-carousel is-medium" id="section2">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+    #section2 {
+      background-color: #fff; /* White background */
+      overflow: hidden; /* Hide overflowing content from the carousel */
+      padding-bottom: 2rem; /* Add padding at the bottom */
+    }
+
+    #section2 .title.is-2 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 4rem;
+      font-weight: bold;
+    }
+
+    #section2 .subtitle {
+      font-family: sans-serif;
+      margin-bottom: 1rem; /* Reduced margin */
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden; /* Hide overflowing images */
+    }
+
+    .carousel-items {
+      display: flex;
+      transition: transform 0.5s ease-in-out; /* Smooth transition */
+       /*overflow-x: scroll;  Use JavaScript for scrolling */
+      scroll-behavior: smooth; /* Smooth scrolling */
+      width: fit-content;
+    }
+     /* Style for each image item */
+    .carousel-item {
+      flex: 0 0 auto;       /* Don't grow or shrink, stay at auto width */
+      width: 33.3333%; /* Adjust width, controls the initial number of visible images */
+      padding: 0.75rem;
+    }
+    .carousel-item img {
+      display: block; /* Remove any extra spacing below the image */
+      width: 100%;    /* Make images fill their container */
+      height: auto;   /* Maintain aspect ratio */
+    }
+
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+
+    .carousel-nav button {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 1.5rem;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-nav button:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .button-container{
+        display: flex;
+        justify-content: center;
+    }
+
+    .view-more-button {
+      background-color: #4CAF50; /* Green button */
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      display: inline-block; /* For centering */
+      font-size: 1rem;
+      cursor: pointer;
+       margin-top: 1rem;
+       transition: background-color 0.3s;
+
+    }
+      .view-more-button:hover {
+        background-color: #367c39; /* Darker Green */
+    }
+     @media (max-width: 768px) {
+        .carousel-item{
+            width: 50%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .carousel-item {
+            width: 100%; /* One image per slide on very small screens */
+        }
+    }
+
+  </style>
+
+  <div class="container">
+    {{ with $title }}
+    <div class="title-wrapper has-text-centered">
+      <h2 class="title is-2">{{ . }}</h2>
+      {{ with $subtitle }}<h3 class="subtitle is-5 is-muted">{{ . }}</h3>{{ end }}
+      <div class="divider is-centered"></div>
+    </div>
+    {{ end }}
+
+
+    <div class="carousel-wrapper">
+      <div class="carousel-items">
+        {{- range $items }}
+        <div class="carousel-item">
+          <img src="{{ printf "images/%s" .image | relURL }}" alt="{{ .title }}">
+        </div>
         {{- end }}
       </div>
+
+       <div class="carousel-nav">
+        <button class="prev-button">❮</button>
+        <button class="next-button">❯</button>
+      </div>
     </div>
+    {{with $button_text}}
+    <div class="button-container">
+        <a href="{{$button_link | relURL}}" class="view-more-button">{{.}}</a>
+    </div>
+     {{end}}
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const carouselItems = document.querySelector('.carousel-items');
+      const prevButton = document.querySelector('.prev-button');
+      const nextButton = document.querySelector('.next-button');
+       let currentPosition = 0;
+       let itemWidth = document.querySelector('.carousel-item').offsetWidth;
+
+      function updateCarousel() {
+        // Calculate total width of all items.
+        const totalWidth = Array.from(carouselItems.children).reduce((acc, item) => acc + item.offsetWidth, 0);
+        // Calculate visible width of the carousel
+        const visibleWidth = carouselItems.offsetWidth;
+
+        //Prevent scroll over
+        // Ensure currentPosition does not go beyond bounds.  Min/Max the position.
+        currentPosition = Math.max(0, Math.min(currentPosition, totalWidth - visibleWidth));
+        carouselItems.style.transform = `translateX(-${currentPosition}px)`;
+      }
+
+
+        nextButton.addEventListener('click', function() {
+           itemWidth = document.querySelector('.carousel-item').offsetWidth;
+           currentPosition += itemWidth; // Move by one item width.
+           updateCarousel();
+
+        });
+
+        prevButton.addEventListener('click', function() {
+             itemWidth = document.querySelector('.carousel-item').offsetWidth;
+            currentPosition -= itemWidth;
+            updateCarousel();
+        });
+
+         // Update the carousel on window resize.
+        window.addEventListener('resize', updateCarousel);
+
+        // Initial update.
+        updateCarousel();
+
+
+    });
+  </script>
+
 </section>

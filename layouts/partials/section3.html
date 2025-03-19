@@ -1,28 +1,153 @@
-{{- $section3   := .Site.Params.section3 }}
-{{- $title      := index $section3 "title" }}
-{{- $subtitle   := index $section3 "subtitle" }}
-{{- $image      := index $section3 "image" }}
-{{- $buttonText := index $section3 "buttontext" }}
-{{- $buttonLink := index $section3 "buttonlink" }}
-<section class="section section-feature-grey is-medium" id="section3">
+{{- $section3 := .Site.Params.section3 }}
+{{- $features := $section3.features }}
+{{- $leftContent := $section3.left_content }}
+
+<section class="section middle-section" id="section3"
+  {{ with $section3.background_image }}
+    style="background-image: url('{{ printf "images/%s" . | relURL }}'); background-size: cover; background-position: bottom; background-repeat: no-repeat;"
+  {{ end }}
+>
+  <style>
+    #section3 {
+      /* Removed background-color (now using background-image) */
+      padding: 4rem 0;
+    }
+
+    .feature-box {
+      background-color: #F2990D; /* Orange - Hardcoded */
+      color: #ffffff; /* White text - Hardcoded */
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      position: relative;
+      display: flex;         /* Use flexbox for internal layout */
+      flex-direction: column;  /* Stack content vertically */
+      height: 100%;          /* Make boxes fill their container */
+    }
+
+    .feature-box:hover {
+      transform: translateY(-5px);
+    }
+
+    /* No overlay needed */
+
+    .feature-box h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-family: sans-serif;
+      position: relative;
+      z-index: 2;
+      font-weight: 700;
+       color: white; /* White text */
+      /* color will be set inline, but default to white */
+    }
+
+    .feature-box h3 a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .feature-box h3 a:hover {
+         text-decoration: underline;
+      }
+
+    .feature-box p {
+      font-size: 1rem;
+      line-height: 1.6;
+      font-family: sans-serif;
+      position: relative;
+      z-index: 2;
+      flex: 1; /* Allow paragraph to grow and push icons down */
+      display: flex;
+      font-weight: 300;
+      flex-direction: column;
+      justify-content: center; /* Vertically center text */
+
+    }
+
+    .feature-box .feature-icons {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      margin-top: auto; /* Push icons to the bottom */
+    }
+
+    .feature-box .feature-icons svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
+      margin: 0.5rem;
+    }
+
+    /* Left-side content */
+    .left-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .left-content .big-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-family: sans-serif;
+      color: green;  /* Green text */
+    }
+
+    .left-content .left-side-title {
+      font-family: sans-serif;
+      font-size: 1.5rem;
+       color: rgb(0, 0, 0); /* Make the title text green */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .left-content {
+        margin-bottom: 2rem;
+        flex-direction: column;
+      }
+    }
+  </style>
+
   <div class="container">
-    <div class="columns">
-      <div class="column is-10 is-offset-1">
-        <div class="has-text-centered">
-          <img class="pushed-image" src="{{ printf "images/%s" $image | relURL }}">
+    <div class="columns is-multiline">
+
+      {{ with $leftContent }}
+      <div class="column is-4-desktop is-12-tablet">
+        <div class="left-content">
+          <div>
+            {{ with .title }}
+            <div class="left-side-title">{{ . }}</div>
+            {{end}}
+            {{ with .big_number }}<div class="big-number">{{ . }}</div>{{ end }}
+          </div>
+        </div>
+      </div>
+      {{ end }}
+
+      <div class="column is-8-desktop is-12-tablet">
+        <div class="columns is-multiline">  {{/* Keep this for horizontal layout */}}
+          {{- range $features }}
+          <div class="column is-6-desktop is-12-tablet">
+            <div class="feature-box">  {{/* No background image style here */}}
+              <h3 style="color: {{ .title_color | default "#fff" }};"><a href="{{ .url | relURL }}">{{ .title }}</a></h3>
+              <p>{{ .text }}</p>
+              {{ with .icons }}
+                <div class="feature-icons">
+                  {{ range . }}
+                    {{ partial "svg-icon.html" (dict "icon" . "context" $) }}
+                  {{ end }}
+                </div>
+              {{ end }}
+            </div>
+          </div>
+          {{- end }}
         </div>
       </div>
     </div>
-
-    <div class="title-wrapper has-text-centered">
-      <h2 class="title is-2">{{ $title }}</h2>
-      <h3 class="subtitle is-5 is-muted">{{ $subtitle }}</h3>
-    </div>
-
-    <p class="has-text-centered mt-20">
-      <a class="button cta is-large rounded secondary-btn raised" href="{{ $buttonLink }}">
-        {{ $buttonText }}
-      </a>
-    </p>
   </div>
 </section>
